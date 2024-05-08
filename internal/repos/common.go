@@ -1,4 +1,4 @@
-package persistence
+package repos
 
 import (
 	"github.com/edwinhuish/go-rest-template/internal/db"

@@ -1,4 +1,4 @@
-package persistence
+package repos
 
 import (
 	"strconv"

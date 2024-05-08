@@ -6,7 +6,7 @@ import (
 
 	"github.com/edwinhuish/go-rest-template/internal/api/gin2"
 	models "github.com/edwinhuish/go-rest-template/internal/models/tasks"
-	"github.com/edwinhuish/go-rest-template/internal/persistence"
+	"github.com/edwinhuish/go-rest-template/internal/repos"
 )
 
 type TaskController struct {
@@ -17,6 +17,7 @@ func NewTaskController() *TaskController {
 }
 
 // GetTaskById godoc
+//
 //	@Summary		Retrieves task based on given ID
 //	@Description	get Task by ID
 //	@Produce		json
@@ -25,7 +26,7 @@ func NewTaskController() *TaskController {
 //	@Router			/api/tasks/{id} [get]
 //	@Security		Authorization Token
 func (ctrl *TaskController) Find(c *gin2.Context) {
-	s := persistence.GetTaskRepository()
+	s := repos.GetTaskRepository()
 	id := c.Param("id")
 	if task, err := s.Get(id); err != nil {
 		c.Status(http.StatusNotFound)
@@ -37,6 +38,7 @@ func (ctrl *TaskController) Find(c *gin2.Context) {
 }
 
 // GetTasks godoc
+//
 //	@Summary		Retrieves tasks based on query
 //	@Description	Get Tasks
 //	@Produce		json
@@ -47,7 +49,7 @@ func (ctrl *TaskController) Find(c *gin2.Context) {
 //	@Router			/api/tasks [get]
 //	@Security		Authorization Token
 func (ctrl *TaskController) List(c *gin2.Context) {
-	s := persistence.GetTaskRepository()
+	s := repos.GetTaskRepository()
 	var q models.Task
 	_ = c.Bind(&q)
 	if tasks, err := s.Query(&q); err != nil {
@@ -60,7 +62,7 @@ func (ctrl *TaskController) List(c *gin2.Context) {
 }
 
 func (ctrl *TaskController) Create(c *gin2.Context) {
-	s := persistence.GetTaskRepository()
+	s := repos.GetTaskRepository()
 	var taskInput models.Task
 	_ = c.BindJSON(&taskInput)
 	if err := s.Add(&taskInput); err != nil {
@@ -73,7 +75,7 @@ func (ctrl *TaskController) Create(c *gin2.Context) {
 }
 
 func (ctrl *TaskController) Update(c *gin2.Context) {
-	s := persistence.GetTaskRepository()
+	s := repos.GetTaskRepository()
 	id := c.Params.ByName("id")
 	var taskInput models.Task
 	_ = c.BindJSON(&taskInput)
@@ -93,7 +95,7 @@ func (ctrl *TaskController) Update(c *gin2.Context) {
 }
 
 func (ctrl *TaskController) Delete(c *gin2.Context) {
-	s := persistence.GetTaskRepository()
+	s := repos.GetTaskRepository()
 	id := c.Params.ByName("id")
 	var taskInput models.Task
 	_ = c.BindJSON(&taskInput)

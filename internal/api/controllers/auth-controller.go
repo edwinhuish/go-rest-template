@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/edwinhuish/go-rest-template/internal/api/gin2"
-	"github.com/edwinhuish/go-rest-template/internal/persistence"
 	"github.com/edwinhuish/go-rest-template/internal/pkg/crypto"
+	"github.com/edwinhuish/go-rest-template/internal/repos"
 )
 
 type LoginInput struct {
@@ -24,7 +24,7 @@ func (ctrl *AuthController) Login(c *gin2.Context) {
 
 	var loginInput LoginInput
 	_ = c.BindJSON(&loginInput)
-	s := persistence.GetUserRepository()
+	s := repos.GetUserRepository()
 	if user, err := s.GetByUsername(loginInput.Username); err != nil {
 		c.Status(http.StatusNotFound)
 		c.Resp().Fail("user not found")
