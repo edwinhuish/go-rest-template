@@ -1,9 +1,10 @@
 package middlewares
 
 import (
-	"github.com/antonioalfa22/go-rest-template/pkg/crypto"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/edwinhuish/go-rest-template/internal/pkg/crypto"
+	"github.com/gin-gonic/gin"
 )
 
 func AuthRequired() gin.HandlerFunc {

@@ -2,11 +2,12 @@ package test
 
 import (
 	"fmt"
-	"github.com/antonioalfa22/go-rest-template/internal/pkg/config"
-	"github.com/antonioalfa22/go-rest-template/internal/pkg/db"
-	models "github.com/antonioalfa22/go-rest-template/internal/pkg/models/users"
-	"github.com/antonioalfa22/go-rest-template/internal/pkg/persistence"
 	"testing"
+
+	"github.com/edwinhuish/go-rest-template/internal/config"
+	"github.com/edwinhuish/go-rest-template/internal/db"
+	models "github.com/edwinhuish/go-rest-template/internal/models/users"
+	"github.com/edwinhuish/go-rest-template/internal/persistence"
 )
 
 var userTest models.User

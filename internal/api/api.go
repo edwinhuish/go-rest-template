@@ -3,9 +3,9 @@ package api
 import (
 	"fmt"
 
-	"github.com/antonioalfa22/go-rest-template/internal/api/router"
-	"github.com/antonioalfa22/go-rest-template/internal/pkg/config"
-	"github.com/antonioalfa22/go-rest-template/internal/pkg/db"
+	"github.com/edwinhuish/go-rest-template/internal/api/router"
+	"github.com/edwinhuish/go-rest-template/internal/config"
+	"github.com/edwinhuish/go-rest-template/internal/db"
 	"github.com/gin-gonic/gin"
 )
 

@@ -1,13 +1,14 @@
 package persistence
 
 import (
-	"github.com/antonioalfa22/go-rest-template/internal/pkg/db"
-	models "github.com/antonioalfa22/go-rest-template/internal/pkg/models/tasks"
 	"strconv"
+
+	"github.com/edwinhuish/go-rest-template/internal/db"
+	models "github.com/edwinhuish/go-rest-template/internal/models/tasks"
 )
 
-
 type TaskRepository struct{}
+
 var taskRepository *TaskRepository
 
 func GetTaskRepository() *TaskRepository {
@@ -46,7 +47,10 @@ func (r *TaskRepository) Add(task *models.Task) error {
 	return err
 }
 
-func (r *TaskRepository) Update(task *models.Task) error { return db.GetDB().Omit("User").Save(&task).Error }
+func (r *TaskRepository) Update(task *models.Task) error {
+	return db.GetDB().Omit("User").Save(&task).Error
+}
 
-func (r *TaskRepository) Delete(task *models.Task) error { return db.GetDB().Unscoped().Delete(&task).Error }
-
+func (r *TaskRepository) Delete(task *models.Task) error {
+	return db.GetDB().Unscoped().Delete(&task).Error
+}

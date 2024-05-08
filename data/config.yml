@@ -14,3 +14,17 @@ server:
   secret: "jdnfksdmfksda"
   #release | debug
   mode: "release"
+
+logger:
+  console_enabled: true
+  # DEBUG INFO WARN ERROR DPANIC PANIC FATAL
+  console_level: "DEBUG"
+  console_json: false
+  file_enabled: true
+  file_level: "DEBUG"
+  file_json: true
+  directory: "log"
+  filename: "runtime.log"
+  max_size: 100
+  max_backups: 10
+  max_age: 10

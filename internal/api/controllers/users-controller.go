@@ -2,13 +2,13 @@ package controllers
 
 import (
 	"errors"
-	models "github.com/antonioalfa22/go-rest-template/internal/pkg/models/users"
-	"github.com/antonioalfa22/go-rest-template/internal/pkg/persistence"
-	"github.com/antonioalfa22/go-rest-template/pkg/crypto"
-	"github.com/antonioalfa22/go-rest-template/pkg/http-err"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+
+	"github.com/edwinhuish/go-rest-template/internal/api/gin2"
+	models "github.com/edwinhuish/go-rest-template/internal/models/users"
+	"github.com/edwinhuish/go-rest-template/internal/persistence"
+	"github.com/edwinhuish/go-rest-template/internal/pkg/crypto"
 )
 
 type UserInput struct {
@@ -19,48 +19,58 @@ type UserInput struct {
 	Role      string `json:"role"`
 }
 
+type UserController struct {
+}
+
+func NewUserController() *UserController {
+	return &UserController{}
+}
+
 // GetUserById godoc
-// @Summary Retrieves user based on given ID
-// @Description get User by ID
-// @Produce json
-// @Param id path integer true "User ID"
-// @Success 200 {object} users.User
-// @Router /api/users/{id} [get]
-// @Security Authorization Token
-func GetUserById(c *gin.Context) {
+//
+//	@Summary		Retrieves user based on given ID
+//	@Description	get User by ID
+//	@Produce		json
+//	@Param			id	path		integer	true	"User ID"
+//	@Success		200	{object}	users.User
+//	@Router			/api/users/{id} [get]
+//	@Security		Authorization Token
+func (ctrl *UserController) Find(c *gin2.Context) {
 	s := persistence.GetUserRepository()
 	id := c.Param("id")
 	if user, err := s.Get(id); err != nil {
-		http_err.NewError(c, http.StatusNotFound, errors.New("user not found"))
+		c.Resp().Fail(errors.New("user not found"))
 		log.Println(err)
+		return
 	} else {
-		c.JSON(http.StatusOK, user)
+		c.Resp().Success(user)
 	}
 }
 
 // GetUsers godoc
-// @Summary Retrieves users based on query
-// @Description Get Users
-// @Produce json
-// @Param username query string false "Username"
-// @Param firstname query string false "Firstname"
-// @Param lastname query string false "Lastname"
-// @Success 200 {array} []users.User
-// @Router /api/users [get]
-// @Security Authorization Token
-func GetUsers(c *gin.Context) {
+//
+//	@Summary		Retrieves users based on query
+//	@Description	Get Users
+//	@Produce		json
+//	@Param			username	query	string	false	"Username"
+//	@Param			firstname	query	string	false	"Firstname"
+//	@Param			lastname	query	string	false	"Lastname"
+//	@Success		200			{array}	[]users.User
+//	@Router			/api/users [get]
+//	@Security		Authorization Token
+func (ctrl *UserController) List(c *gin2.Context) {
 	s := persistence.GetUserRepository()
 	var q models.User
 	_ = c.Bind(&q)
 	if users, err := s.Query(&q); err != nil {
-		http_err.NewError(c, http.StatusNotFound, errors.New("users not found"))
+		c.Resp().Fail("users not found")
 		log.Println(err)
 	} else {
-		c.JSON(http.StatusOK, users)
+		c.Resp().Success(users)
 	}
 }
 
-func CreateUser(c *gin.Context) {
+func (ctrl *UserController) Create(c *gin2.Context) {
 	s := persistence.GetUserRepository()
 	var userInput UserInput
 	_ = c.BindJSON(&userInput)
@@ -72,20 +82,21 @@ func CreateUser(c *gin.Context) {
 		Role:      models.UserRole{RoleName: userInput.Role},
 	}
 	if err := s.Add(&user); err != nil {
-		http_err.NewError(c, http.StatusBadRequest, err)
+		c.Resp().Fail(err)
 		log.Println(err)
 	} else {
-		c.JSON(http.StatusCreated, user)
+		c.Resp().Success(user)
 	}
 }
 
-func UpdateUser(c *gin.Context) {
+func (ctrl *UserController) Update(c *gin2.Context) {
 	s := persistence.GetUserRepository()
 	id := c.Params.ByName("id")
 	var userInput UserInput
 	_ = c.BindJSON(&userInput)
 	if user, err := s.Get(id); err != nil {
-		http_err.NewError(c, http.StatusNotFound, errors.New("user not found"))
+		c.Status(http.StatusNotFound)
+		c.Resp().Fail("user not found")
 		log.Println(err)
 	} else {
 		user.Username = userInput.Username
@@ -94,28 +105,32 @@ func UpdateUser(c *gin.Context) {
 		user.Hash = crypto.HashAndSalt([]byte(userInput.Password))
 		user.Role = models.UserRole{RoleName: userInput.Role}
 		if err := s.Update(user); err != nil {
-			http_err.NewError(c, http.StatusNotFound, err)
+			c.Status(http.StatusNotFound)
+			c.Resp().Fail(err)
 			log.Println(err)
 		} else {
-			c.JSON(http.StatusOK, user)
+			c.Resp().Success(user)
 		}
 	}
 }
 
-func DeleteUser(c *gin.Context) {
+func (ctrl *UserController) Delete(c *gin2.Context) {
 	s := persistence.GetUserRepository()
 	id := c.Params.ByName("id")
 	var userInput UserInput
 	_ = c.BindJSON(&userInput)
 	if user, err := s.Get(id); err != nil {
-		http_err.NewError(c, http.StatusNotFound, errors.New("user not found"))
+		c.Status(http.StatusNotFound)
+		c.Resp().Fail("user not found")
 		log.Println(err)
 	} else {
 		if err := s.Delete(user); err != nil {
-			http_err.NewError(c, http.StatusNotFound, err)
+			c.Status(http.StatusNotFound)
+			c.Resp().Fail(err)
 			log.Println(err)
 		} else {
-			c.JSON(http.StatusNoContent, "")
+			c.Status(http.StatusNoContent)
+			c.Resp().Success()
 		}
 	}
 }
